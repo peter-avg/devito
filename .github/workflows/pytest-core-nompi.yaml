@@ -47,9 +47,6 @@ jobs:
         ]
         set: [base, adjoint]
 
-        # default for everyone
-        numpy: ["numpy"]
-
         include:
         - name: pytest-ubuntu-py311-gcc11-cxxnoomp
           python-version: '3.11'
@@ -71,7 +68,6 @@ jobs:
           arch: "gcc-14"
           language: "openmp"
           sympy: "1.12"
-          numpy: "numpy==1.26"
 
         - name: pytest-ubuntu-py311-gcc10-noomp
           python-version: '3.11'
@@ -192,7 +188,10 @@ jobs:
         python3 -m pip install ${{ env.PIPFLAGS }} --upgrade pip
         python3 -m pip install ${{ env.PIPFLAGS }} -e ".[tests,extras]"
         python3 -m pip install ${{ env.PIPFLAGS }} sympy==${{matrix.sympy}}
-        python3 -m pip install ${{ env.PIPFLAGS }} ${{matrix.numpy}}
+
+    - name: Backward compat for numpy 1.26
+      if: matrix.name == 'pytest-ubuntu-py310-gcc14-omp'
+      run: python3 -m pip install ${{ env.PIPFLAGS }} numpy==1.26
 
     - name: Check Docker image Python version
       if: "contains(matrix.name, 'docker')"
