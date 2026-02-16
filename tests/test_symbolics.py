@@ -881,7 +881,7 @@ class TestUxreplace:
 
         w_sub = uxreplace(w_lowered, {h_x: Number(3)})
 
-        assert np.isclose(w_sub, -0.003935689)
+        assert np.isclose(float(w_sub), -0.003935689)
         assert not w_sub.is_Mul
         assert w_sub.is_Number
 
