@@ -354,7 +354,7 @@ class GuardExpr(LocalObject, BooleanFunction):
     it is defined.
     """
 
-    dtype = np.bool
+    dtype = np.bool_
 
     def __init__(self, name, liveness='eager', **kwargs):
         super().__init__(name, liveness=liveness, **kwargs)
