@@ -200,3 +200,18 @@ def test_eval_at_different_dim():
     eq = Eq(tau.forward, v).evaluate
 
     assert grid.time_dim not in eq.rhs.free_symbols
+
+
+def test_new_from_staggering():
+    grid = Grid(shape=(31, 17, 25))
+    x, _, _ = grid.dimensions
+
+    f = TimeFunction(name="f", grid=grid, staggered=x)
+    # This used to fail since f.staggered as 4 elements (0, 1, 0, 0)
+    # but it is processed for Dimension only.
+    # Now properly  converts Staggering to the ref (x,) at init
+    g = TimeFunction(name="g", grid=grid, staggered=f.staggered)
+
+    assert g.staggered._ref == (x,)
+    assert g.staggered == (0, 1, 0, 0)
+    assert g.staggered == f.staggered
