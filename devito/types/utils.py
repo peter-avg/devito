@@ -59,7 +59,9 @@ class Staggering(DimensionTuple):
 
     @property
     def _ref(self):
-        if self.on_node:
+        if not self:
+            return None
+        elif self.on_node:
             return NODE
         else:
             return tuple(d for d, s in zip(self.getters, self, strict=True) if s == 1)

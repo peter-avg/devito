@@ -3,8 +3,7 @@ import pytest
 from sympy import simplify
 
 from devito import (
-    CELL, NODE, Dimension, Eq, Function, Grid, Operator, TimeFunction, VectorTimeFunction,
-    div
+    CELL, NODE, Eq, Function, Grid, Operator, TimeFunction, VectorTimeFunction, div
 )
 from devito.tools import as_tuple, powerset
 
@@ -173,16 +172,15 @@ def test_staggered_rebuild(stagg):
     f = Function(name='f', grid=grid, space_order=4, staggered=stagg)
     assert tuple(f.staggered.getters.keys()) == grid.dimensions
 
-    new_dims = (Dimension('x1'), Dimension('y1'), Dimension('z1'))
-    f2 = f.func(dimensions=new_dims)
+    f2 = f.func(name="f2")
 
-    assert f2.dimensions == new_dims
+    assert f2.dimensions == f.dimensions
     assert tuple(f2.staggered) == tuple(f.staggered)
-    assert tuple(f2.staggered.getters.keys()) == new_dims
+    assert tuple(f2.staggered.getters.keys()) == f.dimensions
 
     # Check that rebuild correctly set the staggered indices
     # with the new dimensions
-    for (d, nd) in zip(grid.dimensions, new_dims, strict=True):
+    for (d, nd) in zip(grid.dimensions, f.dimensions, strict=True):
         if d in as_tuple(stagg) or stagg is CELL:
             assert f2.indices[nd] == nd + nd.spacing / 2
         else:
