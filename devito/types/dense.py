@@ -1143,6 +1143,9 @@ class Function(DiscreteFunction):
             * 0 to non-staggered dimensions;
             * 1 to staggered dimensions.
         """
+        if isinstance(staggered, Staggering):
+            staggered = staggered._ref
+
         if not staggered:
             processed = ()
         elif staggered is CELL:
