@@ -1,5 +1,6 @@
 import abc
 import inspect
+import warnings
 from contextlib import suppress
 from ctypes import POINTER, Structure, _Pointer, c_char, c_char_p
 from functools import cached_property, reduce
@@ -9,6 +10,7 @@ import numpy as np
 import sympy
 from sympy.core.assumptions import _assume_rules
 from sympy.core.decorators import call_highest_priority
+from sympy.utilities.exceptions import SymPyDeprecationWarning
 
 from devito.data import default_allocator
 from devito.parameters import configuration
@@ -1533,9 +1535,19 @@ class AbstractTensor(sympy.ImmutableDenseMatrix, Basic, Pickable, Evaluable):
         # This is used internally by sympy to process arguments at rebuilt. And since
         # some of our properties are non-sympyfiable we need to have a fallback
         try:
-            return super()._sympify(arg)
-        except sympy.SympifyError:
+            # Pure sympy object
+            return arg._sympy_()
+        except AttributeError:
             return arg
+
+    @classmethod
+    def _eval_from_dok(cls, rows, cols, dok):
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                category=SymPyDeprecationWarning
+            )
+            return super()._eval_from_dok(rows, cols, dok)
 
     @property
     def grid(self):
