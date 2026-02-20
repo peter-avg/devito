@@ -916,6 +916,10 @@ class AbstractFunction(sympy.Function, Basic, Pickable, Evaluable):
             return nopadding
         d = self.space_dimensions[-1]
 
+        # Last space Dimension is not the most inner Dimension
+        if d != self.dimensions[-1]:
+            return nopadding
+
         mmts = configuration['platform'].max_mem_trans_size(self.__padding_dtype__)
         remainder = self._size_nopad[d] % mmts
         if remainder == 0:
